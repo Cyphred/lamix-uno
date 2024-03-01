@@ -125,7 +125,7 @@ void setup() {
   pinMode(CLEANER_RELAY, OUTPUT);
   pinMode(AGITATOR_RELAY, OUTPUT);
 
-  // Turn off all relays
+  // Turn off all relays on startup
   setFan(false);
   setHeater(false);
   setPump(false);
@@ -137,6 +137,9 @@ void setup() {
 
 
 void loop() {
+  // This will interpret incoming data over serial
+  // from the orange pi. It can be several consecutive
+  // characters like '13579' which turns on everything
   while (Serial.available()) {
     byte input = Serial.read();
     
@@ -177,9 +180,12 @@ void loop() {
   sensors.requestTemperatures(); 
 
   float temp = sensors.getTempCByIndex(0);
-  float ph = getPhReading();            // 100ms
-  float ethanol = getEthanolReading();  // 0ms
+  float ph = getPhReading();            // Has a 100ms delay
+  float ethanol = getEthanolReading();  // 0ms delay on this one
 
+  // Retain this format unless you've changed the
+  // python-side code to accept a new/altered format
+  // of passing the data via serial
   Serial.print(ph);
   Serial.print(",");
   Serial.print(ethanol);
